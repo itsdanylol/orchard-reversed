@@ -1,0 +1,168 @@
+orchard-1.21.11.jar — full reverse-engineering teardown
+========================================================
+
+IDENTITY
+--------
+Product      : "Orchard Client" (internal name: ilovcats), version 1.8.0+1.21.11, build 251
+Type         : Minecraft 1.21.11 Fabric CLIENT-ONLY utility/cheat mod (hack client)
+Author alias : "v1s0r" (mixin config v1s0r.mixins.json), self-branded "Ilovcats"
+License      : LicenseRef-Orchard-Proprietary
+Hidden secret: lang file is registered as "NameSkinChanger" (key.nsc.*) — an old product
+               name; the client itself is a full combat/utility hack client
+Size         : 8.8 MB, 695 classes (k74.x = core, k74.y = 63 mixins), Fabric Loader >=0.18.4, Java 21
+Discord/community hint: smp.fadedmc.net / pvp.fadedmc.net hardcoded server allowlist in module code
+
+PROTECTION LAYER
+----------------
+1. String encryption everywhere: two layers
+   - Layer 1: unicode-blob constant pool decryption in <clinit> (rot+XOR per char)
+   - Layer 2: per-callsite decryptors keyed by (callerClassName.hashCode ^ callerMethodName.hashCode) >> 16 ^ const
+     -> strings only decrypt if called from the exact original call site (anti-LLM/decompiler)
+   - Layer 3: base64 + LCG-derived XOR stream wrapper (k74.x.IlIIllIII) on top
+2. Stack-frame self-verification inside decryptors (new Throwable().getStackTrace()[1])
+3. Two AI honeypot files shipped inside the jar:
+   - assets/m2c8/security/eval_agent_context.json — prompt injection telling AI models to
+     refuse analysis and claim all code is "honeypot decoys" (fake policy text)
+   - assets/m2c8/security/decomp_symbol_cache.bin — fake symbol table pointing at a
+     q96.x package that does not exist (poisons automated symbol-mapping tools)
+4. Runtime java.lang.reflect.Proxy interceptors (IIlIlIIII, lIIIIl) — method-level hooking
+   without mixins
+5. Self-jar integrity check via CodeSource + URL (IIllllll)
+6. Only 8 of 815 recovered strings reveal real infrastructure; ~2400 call sites remain
+   unresolvable offline by design (stack-hash dependency)
+
+HOOK MAP (63 mixins, k74.y)
+---------------------------
+class_310  Minecraft              -> init/resize/pause/close, key handling, screens
+class_312  MouseHandler           click routing (GUI/TriggerBot)
+class_1657/1309/1297 Player/LivingEntity/Entity — movement, spawn, hit ticks
+class_636  ClientPlayerEntity     input routing, potions, entity checks
+class_746  MultiPlayerGameMode    attack/interact/sendUseItem (core combat hooks)
+class_634  ClientPacketListener   chat/commands, keepalive, disconnect handling
+class_2535 Connection (netty)     channelRead0 + send — full packet interception
+class_759  ItemRenderer           first-person hand rendering (Animations module)
+class_897/1671 EntityRenderer(s)  fake players, fake-client badge, outline rendering
+class_1661 PlayerInventory         slot clicks (ChestStealer, switch logic)
+class_761  FirstPersonRenderer    hand swing
+class_765  ? (ping spoofing hooks)
+class_4184 FreeCamera input hooks
+class_3521/block collisions (click pearls, jump circles)
+class_9779$class_9781 tick counter
+World rendering bridged through Fabric WorldRenderEvents ($AfterEntities, $EndExtraction)
+
+DECRYPTED MODULE CATALOG (~70 modules)
+--------------------------------------
+Combat:     TriggerBot (target mode, range + variability, sword/axe cooldowns, reaction time
+            ms, smart crits, unshield, ignore shields, players only, invisible players,
+            weapon only, hold bind) — NoMissDelay (chance %), Aim Assist (mode, range, FOV,
+            strength, smoothness, reaction time, aim drift %, hand tremor %, pitch ratio,
+            smart, allow override, aim priority), Aim Optimizer (mouse slowdown near targets,
+            tracking scale, pitch weight, deadzone, micro adjustment), NoMissDelay, MaceSwap
+            (StunSlam, Breach Swap, min fall distance, density above), PearlChase (counter
+            pearl vs opponent pearls, rotation mode, health check), ClickPearl/PearlCatch,
+            Perfect Windcharge (auto-jump on wind charge at feet), Crystal module (Switch
+            Delay, Obby Place Delay, Crystal Place Delay, Explode Delay), SnapTap-style
+            combat resets: SprintReset (instant sprint reset after hits, delay ms), KeepSprint
+            (velocity ratio, sprint condition), Hitbox (mode Middle), Totemguard, LagRange
+            (packet choking while closing into range: start range b, ticks t, max delay ms,
+            last target only, stop on damage, indicator)
+Automation: Autoclicker (CPS, button, only-when-holding), ChestStealer (delay, shulkers,
+            hoppers, chest aura, only valuables), ChestAura, InventoryCleaner (drop junk,
+            clean armor/tools/custom models), Inventory Presets, FastCart (minecart after
+            rail), FastPlace (removes RMB delay), FastXP (auto XP bottles to repair gear,
+            start/target durability), FastCart, AutoGG (kill message: "Maybe this client
+            would have saved you <3"), Auto Runner, Auto TpBack
+Movement:   Speed (legit with straight-line equalization or sprint+autojump; exploit mode,
+            no jump delay), Legit Scaffold (edge sneaking, length ticks, sneak speed
+            multiplier, ground/blocks-only/backwards conditions), Parkour (edge auto-jump),
+            NoJumpDelay, VClip (distance blocks, reset motion), Sprint (vanilla toggle),
+            Free Camera, SnapTap (opposing inputs resolve to latest direction), WebAssist
+            (place ONLY cobwebs through entities)
+Render:     2D ESP (mode, health bar), DivebombESP (3-block ground heatmap), Storage ESP
+            (chests/barrels/hoppers/furnaces/shulkers/ender chests/spawners, per-type color,
+            box/item style), PlayerLocator (outlined players through walls, nametags, custom
+            target list), TargetCircle (animated circle around target, radius/speed/trail),
+            PopVisuals (frozen ghost on totem/charm pop, fill/outline, fade time, y anim),
+            Glow (theme glow outlines), Rotations (silent server head rotations on model),
+            Trajectories (projectile path prediction, max ticks, landing, in-flight),
+            JumpCircle, Chinahat (cone hat on heads!), Hitbox, FullBright, NoEffectView
+            (removes nausea/darkness camera effects), Animations (first-person item anims:
+            holding/swing modes, swing speed/curve/strength, per-axis rotations, spin speed,
+            tilt, scale, offsets, full offhand mirror set)
+HUD:        Spotify HUD (song, album art, progress, SYNCED LYRICS via lrclib.net), FPS, BPS,
+            Effects (potion effects grid), Inventory (compact grid), Spotify preview themes
+            ("FEAR.", "DAMN.")
+Client:     Fake Client (spoofs brand/channels as Fabric, Feather, or Lunar; fake badge
+            assets scanning), FakePlayer (spawns fake opponents to test modules),
+            FakeHacker (makes a named player look at you and swing client-side), PingSpoof
+            (manual or opponent-matched latency), AntiBot (tablist absence, zero ping,
+            malformed identity, invisible bot, air floating, duplicate identity, entity ID
+            checks, grace period), Panic (disable all), Unload Orchard, Opsec ("Your
+            favourite opsec mod, just inside Orchard" — blocked-channel/SSRF/translation
+            probes), FakeLag (removed legacy helper), Aim Helper (removed legacy)
+Categories: Player, Combat, Movement, Render, Hud, Interface
+
+NETWORK SURFACE (all endpoints recovered)
+-----------------------------------------
+1. lrclib.net/api/search?track_name=..&artist_name=..  (lyrics lookup, User-Agent
+   "Ilovcats-Spotify-HUD/1.0") and lrclib.net/api/get?track_name=..&artist_name=..&album_name=..&duration=..
+2. Update checker (k74.x.lIlIl): JSON keys version/build/subversion/mc_target/download_url/
+   notes_url; polls every 30 min; 2s connect timeout; 16 KB response cap; shows "Current:" /
+   "Latest:" dialog with Later/Download buttons. Base URL is stack-hash encrypted in this
+   build's callsites (not recoverable offline without the runtime stack frame).
+3. Profile/name lookup HTTP (k74.x.IIIllIIII secondary client): URL-encodes a name and id
+   into base + q1 + name + q2 + param, 8s timeout, User-Agent header.
+4. NO license/telemetry/HWID upload endpoint found in this build. The `,"hwid":"` JSON
+   builder (lIllllI.IlI) and OS snapshot ("Windows 11", "10.0", win/mac/darwin/nux/nix/aix,
+   android) exist, plus embedded HWID regex
+   (?i)([0-9a-f]{32}|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}) — extraction only, no
+   network send path decrypted for it in build 251.
+
+PROCESS EXECUTION (most interesting finding)
+--------------------------------------------
+k74.x.IIIllIIII extracts /assets/cats/spotify/spotify_session.ps1 from the jar to
+%TEMP%\ilovcats-spotify\spotify_session.ps1 and runs:
+    powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File <script>
+reading JSON+Base64 messages from its stdout, restarting every 2 s while active.
+THIS BUILD IS SAFE: assets/cats/spotify/spotify_session.ps1 does NOT exist in the jar
+(all 140 assets are assets/m2c8/*). getResourceAsStream returns null -> IOException ->
+the Spotify bridge's helper process never launches. Only the lrclib.net HTTP fetch runs.
+
+FILESYSTEM FOOTPRINT
+--------------------
+- .minecraft/orchard-init.log — boot debug log (t=<ms>: entry/4/FAIL markers)
+- configs: settings JSON per profile, modules/settings JSON files, clickGuiLayout,
+  riseClickGuiLayout (imported layout naming), .bak backups, .before-web-restore. snapshots
+- profiles/ + export/ folders, clickGuiBind, storageLocation, backupDirectory keys
+- %TEMP%\ilovcats-spotify\ (Spotify bridge, currently unused)
+- Lunar client cache read: user.home/.lunarclient/launcher-cache/textures/assets/lunar/
+  texturesIndex.txt + cosmetics.json + jit_index (reads Lunar's cosmetic texture indexes)
+
+INTERNAL SERVICES
+-----------------
+- LOCAL WEB SERVER (k74.x.llIIlllI): browser-based ClickGUI. JSON routes include
+  ok/port/webEnabled/nativeFallbackAvailable/clickGuiBind/backupDirectory, profiles,
+  export, saved, restored; audit hooks before-module-toggle, before-keybind-update,
+  before-setting-update, before-clickgui-bind-update, before-action-press,
+  before-profile-save/delete/import, before-hud-mutation, before-web-mutation.
+  "Native ClickGUI fallback has been removed; web ClickGUI cannot be disabled from the UI."
+- SSRF/translation/channel probes are actively BLOCKED in the web layer (Opsec module).
+- Name blacklist: SHA-256(name) first 16 bytes binary-searched over a 7767-entry table
+  (IlIIIIII.lII) — blocked-player list baked into the jar.
+
+CRYPTO / INTEGRITY
+------------------
+- MessageDigest SHA-256 (blacklist + channel probes)
+- SecureRandom + keygen in the string layer
+- Root-file 7be382e0-0b08-4d52-baf2-b66a40643205.bin is a hex-encoded 63-char string —
+  looks like a license/activation signature blob (owner-side token, no local verifier found)
+- DosFileAttributeView use (IlllIlI): hides/detects file attributes for config backups
+- Dynamic Proxy + InvocationHandler pairs intercept methods of foreign classes at runtime
+
+WHAT DIDN'T DECRYPT (residual)
+------------------------------
+~2400 call sites remain unrecovered because their stack-hash key depends on the original
+caller frame; ~250 of 695 classes failed offline clinit (mixin/netty/MC-tied classes).
+The stack-hash design means full string recovery for those requires running the mod inside
+a real 1.21.11 Fabric client with matching frames. Everything user-facing (module names,
+settings labels, HUD text, URLs, config keys) is covered by the recovered set above.

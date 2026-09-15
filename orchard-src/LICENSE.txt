@@ -1,0 +1,117 @@
+CATCLIENT PROPRIETARY SOFTWARE LICENSE
+Version 1.0 - 1 August 2026
+SPDX-License-Identifier: LicenseRef-CatClient-Proprietary
+
+Copyright (c) 2026. All rights reserved.
+
+IMPORTANT: READ THESE TERMS BEFORE INSTALLING OR USING CATCLIENT. BY INSTALLING,
+LAUNCHING, OR USING THE SOFTWARE, YOU ACCEPT THIS LICENSE. IF YOU DO NOT ACCEPT
+IT, DO NOT INSTALL, LAUNCH, COPY, OR USE THE SOFTWARE.
+
+1. Definitions
+
+"CatClient" or "Software" means the CatClient software, including its source
+code, object code, executable JAR files, resources, artwork, configuration,
+documentation, updates, and any portion or derivative of them owned by the
+Licensor.
+
+"Licensor" means the copyright holder and any successor that validly owns the
+applicable rights in CatClient.
+
+"Authorized Copy" means an unmodified copy supplied directly by the Licensor or
+through a distribution channel expressly approved in writing by the Licensor.
+
+2. Limited Permission
+
+Subject to full compliance with this license, the Licensor grants you a limited,
+revocable, non-exclusive, non-transferable, non-sublicensable permission to
+install and execute one Authorized Copy solely for your personal,
+non-commercial use. Any other use requires the Licensor's prior written
+permission. No source-code license is granted.
+
+3. Prohibited Conduct
+
+Except with the Licensor's prior written permission, you may not, and may not
+help another person to:
+
+(a) copy the Software except for the minimum copies technically necessary to
+    install and run an Authorized Copy or to create one legally required backup;
+(b) publish, upload, mirror, distribute, transmit, share, sublicense, rent,
+    lease, lend, sell, resell, assign, or otherwise make the Software available
+    to any other person;
+(c) modify, adapt, translate, patch, alter, or create derivative works based on
+    the Software;
+(d) copy, extract, reuse, incorporate, port, or otherwise use any CatClient source
+    code, object code, assets, resources, design, or implementation in another
+    project, product, or service;
+(e) reverse engineer, decompile, disassemble, decode, decrypt, dump, trace, or
+    otherwise attempt to discover source code, algorithms, protocols, data
+    structures, or internal operation of the Software;
+(f) bypass, disable, defeat, or interfere with licensing, authentication,
+    obfuscation, anti-tamper, access-control, or other technical protection;
+(g) remove, conceal, or alter any copyright, license, attribution, trademark,
+    or proprietary notice; or
+(h) use the Software to provide a commercial service or for any unlawful
+    purpose.
+
+A restriction in this section applies to the maximum extent permitted by law.
+It does not prohibit an act that applicable law expressly permits and does not
+allow the parties to waive or restrict by contract. Where such a mandatory
+exception applies, the act may be performed only to the minimum extent legally
+required, and information obtained may not be used for any other purpose.
+
+4. Ownership and Reservation of Rights
+
+CatClient is licensed, not sold. The Licensor retains all right, title, and
+interest in CatClient, including all copyright, patent, trade-secret, trademark,
+and other intellectual-property rights owned by the Licensor. No right is
+granted by implication, estoppel, exhaustion, or otherwise except the narrow
+permission stated in Section 2. All rights not expressly granted are reserved.
+
+5. Third-Party Materials
+
+CatClient may include or interact with materials owned by third parties. Those
+materials remain governed by their respective licenses and notices. This
+license applies only to rights the Licensor is legally entitled to license and
+does not restrict rights independently granted by a third party.
+
+6. Termination
+
+This license terminates automatically and immediately if you breach any term.
+Upon termination, you must stop using CatClient and permanently delete every copy
+in your possession or control. Sections 3 through 10 survive termination.
+
+7. No Support or Updates
+
+The Licensor has no obligation to provide support, maintenance, updates,
+compatibility, continued availability, or error corrections.
+
+8. Disclaimer of Warranty
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, CATCLIENT IS PROVIDED "AS IS" AND "AS
+AVAILABLE," WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EXPRESS, IMPLIED, OR
+STATUTORY, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE,
+NON-INFRINGEMENT, ACCURACY, SECURITY, OR ERROR-FREE OPERATION.
+
+9. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR WILL NOT BE LIABLE FOR ANY
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR PUNITIVE DAMAGES,
+OR FOR LOSS OF DATA, PROFITS, REVENUE, GOODWILL, OR USE, ARISING FROM OR RELATED
+TO CATCLIENT, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. WHERE LIABILITY
+CANNOT BE EXCLUDED, IT IS LIMITED TO THE AMOUNT YOU PAID THE LICENSOR FOR THE
+AUTHORIZED COPY DURING THE TWELVE MONTHS BEFORE THE EVENT GIVING RISE TO THE
+CLAIM.
+
+10. Severability and Waiver
+
+If any provision is held unenforceable, it will be enforced to the maximum
+extent permitted and the remaining provisions will remain effective. A failure
+to enforce a provision is not a waiver. Any exception or additional permission
+must be in a writing issued by the Licensor.
+
+11. Earlier Releases
+
+This license applies to copies accompanied by it. It does not revoke rights that
+were irrevocably granted for a particular earlier copy under license terms that
+accompanied that earlier copy.
