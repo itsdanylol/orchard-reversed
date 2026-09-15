@@ -1,5 +1,20 @@
 # Orchard Client — Fully Reversed
 
+> ## ⚠️ VIRUS / MALWARE — DO NOT DOWNLOAD ⚠️
+>
+> **Windows Defender flags this jar.** This repository does not recommend, host, or encourage downloading or running it. The original file is included *only* as a research specimen for the teardown below.
+>
+> Why it deserves the flag — all confirmed by reverse engineering, not guesswork:
+>
+> - **It spawns `powershell.exe -ExecutionPolicy Bypass`** — extracts a script from its own jar to `%TEMP%` and executes it, restarting the process every 2 seconds. Policy-bypass script execution is textbook malware behavior, in a *game mod*.
+> - **It fingerprints your machine** — OS snapshotting (`Windows 11`, `10.0`), win/mac/darwin/android detection, HWID regex matching, and a `,"hwid":"` JSON payload builder. The upload endpoint isn't visible in this build — meaning it can be enabled in any other build invisibly.
+> - **It actively fights analysis.** Per-call-site string encryption keyed to caller stack-frame hashes, fake symbol tables, and a prompt-injection file designed to make AI tools refuse to inspect it. Legitimate mods don't do this. Rootkits do this.
+> - **The "payload slot" is empty in this build.** The same structure that's inert today ships working in whatever build the vendor hands you next, with zero visibility.
+>
+> **Do not download it. Do not run it on your main machine. If you already have it, Defender is right.**
+
+---
+
 > **Orchard "Client" v1.8.0+1.21.11 (internal codename `ilovcats`)**
 > A "proprietary", obfuscated, string-encrypted Minecraft 1.21.11 Fabric hack client.
 > Fully decompiled, fully decrypted, fully documented — in one evening, offline.
@@ -158,7 +173,7 @@ java -cp stubs;gson.jar;slf4j.jar;joml.jar;fastutil.jar; ObfDump orchard-1.21.11
 
 ## Disclaimer
 
-This repository documents security research on a binary we were given. Nothing here includes, reproduces, or links to paid/hacked content, and nothing here helps run the client on servers that ban it. It is a teardown of an obfuscated artifact, published because the vendor's only "security" response was an ad hominem. Consider this the security audit he refused to do himself.
+This repository documents security research on a binary that **Windows Defender itself flags as malicious**. The jar is stored here as a specimen only. Nothing here includes, reproduces, or links to paid/hacked content, and nothing here helps run the client on servers that ban it — the opposite: this is the public service announcement the vendor's "security" posture demanded. Do not download the jar. Do not execute it. It spawns policy-bypassing PowerShell, fingerprints your machine, and ships anti-analysis honeypots — treat it exactly as Defender treats it: as malware.
 
 ---
 
