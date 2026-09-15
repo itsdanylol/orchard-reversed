@@ -13,6 +13,30 @@
 >
 > **Do not download it. Do not run it on your main machine. If you already have it, Defender is right.**
 
+### Microsoft's own log — the exact detection
+
+Straight from the Windows Defender operational event log (`Microsoft-Windows-Windows Defender/Operational`, event IDs 1116/1117), verbatim:
+
+```
+Event ID:         1116 (detection) → 1117 (action taken)
+Time:             2026-09-15 21:23:22 / 21:23:26
+Threat name:      Trojan:Win32/Cloxer
+Threat ID:        2147726362
+Severity:         Severe
+Category:         Trojan
+Action:           Quarantine (Error Code: 0x00000000, success)
+Detection Origin: Internet
+Detection Type:   FastPath
+Source:           Downloads and attachments
+Engine:           AM 1.1.26080.3  |  Signatures: AV/AS/NIS 1.459.223.0
+
+Path:    file:_ C:\Users\dany1\Downloads\orchard-1.21.11 (1).jar
+         webfile:_ orchard-1.21.11 (1).jar |
+         https://raw.githubusercontent.com/itsdanylol/orchard-reversed/refs/heads/master/orchard-1.21.11.jar
+```
+
+Note the last line: Defender recorded the **download origin** — `raw.githubusercontent.com/itsdanylol/orchard-reversed/...`. This repository's own specimen jar is flagged by Defender the moment anyone downloads it from this page. Microsoft's scanner and this teardown agree. The vendor's response remains "get a job."
+
 ---
 
 > **Orchard "Client" v1.8.0+1.21.11 (internal codename `ilovcats`)**
